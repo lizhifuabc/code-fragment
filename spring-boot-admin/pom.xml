@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.lizhifuabc</groupId>
+        <artifactId>code-fragment</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>spring-boot-admin</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>spring-boot-admin-client</module>
+        <module>spring-boot-admin-server</module>
+        <module>spring-boot-admin-server-nacos</module>
+        <module>spring-boot-admin-client-nacos</module>
+    </modules>
+
+
+</project>
