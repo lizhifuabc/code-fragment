@@ -37,6 +37,8 @@
     </developers>
     <modules>
         <module>spring-boot-admin</module>
+        <module>spring-boot-redis</module>
+        <module>spring-boot-virtualthreads</module>
     </modules>
 
     <!-- SCM 信息 -->
@@ -47,6 +49,11 @@
     </scm>
 
     <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <spring.cloud.alibaba.version>2023.0.3.2</spring.cloud.alibaba.version>
         <spring-cloud.version>2024.0.0</spring-cloud.version>
     </properties>
