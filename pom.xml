@@ -39,6 +39,7 @@
         <module>spring-boot-admin</module>
         <module>spring-boot-redis</module>
         <module>spring-boot-virtualthreads</module>
+        <module>spring-boot-extension</module>
     </modules>
 
     <!-- SCM 信息 -->
@@ -78,5 +79,18 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
