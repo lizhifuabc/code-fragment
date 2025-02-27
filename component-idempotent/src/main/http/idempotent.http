@@ -1,0 +1,34 @@
+### 测试幂等接口 - 使用自动生成的token
+POST http://localhost:8080/idempotent/order
+Content-Type: application/json
+User-Id: TEST_USER_001
+
+{
+  "productId": "P001",
+  "quantity": 1,
+  "userId": "U001"
+}
+
+### 测试幂等接口 - 使用自定义token
+POST http://localhost:8080/idempotent/order
+Content-Type: application/json
+User-Id: TEST_USER_001
+Idempotent-Token: custom_token_123
+
+{
+  "productId": "P001",
+  "quantity": 1,
+  "userId": "U001"
+}
+
+### 测试幂等接口 - 模拟重复请求
+POST http://localhost:8080/idempotent/order
+Content-Type: application/json
+User-Id: TEST_USER_001
+Idempotent-Token: custom_token_123
+
+{
+  "productId": "P001",
+  "quantity": 1,
+  "userId": "U001"
+}

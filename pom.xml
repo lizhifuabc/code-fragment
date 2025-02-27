@@ -40,6 +40,7 @@
         <module>spring-boot-redis</module>
         <module>spring-boot-virtualthreads</module>
         <module>spring-boot-extension</module>
+        <module>component-idempotent</module>
     </modules>
 
     <!-- SCM 信息 -->
