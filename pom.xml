@@ -40,6 +40,7 @@
         <module>spring-boot-redis</module>
         <module>spring-boot-virtualthreads</module>
         <module>spring-boot-extension</module>
+        <module>spring-boot-minio</module>
         <module>component-idempotent</module>
     </modules>
 
