@@ -11,7 +11,8 @@
 
 [spring-boot-redis 使用Redis](spring-boot-redis)
 
-- TODO
+- guava
+- Redis BitMap 工具类
 
 [spring-boot-virtualthreads 虚拟线程](spring-boot-virtualthreads)
 
