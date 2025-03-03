@@ -43,6 +43,7 @@
         <module>spring-boot-tenant</module>
         <module>spring-boot-minio</module>
         <module>component-idempotent</module>
+        <module>component-rbac</module>
     </modules>
 
     <!-- SCM 信息 -->

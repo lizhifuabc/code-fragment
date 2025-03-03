@@ -49,12 +49,14 @@ TODO
   - 索引必须将`tenant_id`作为最左前缀 → 性能瓶颈风险
   - 全表扫描类查询（如报表统计）无法避免跨租户干扰
 
-
-
  [component-idempotent 幂等](component-idempotent) 
 
 - 前端传输 token 参数校验
 - 使用用户标识、请求路径和请求方法的组合来生成幂等标识
 - 业务完成之后自动删除 key
 - TODO 处理SpEL表达式
+
+ [component-rbac 后台管理系统](component-rbac) 
+
+TODO
 
