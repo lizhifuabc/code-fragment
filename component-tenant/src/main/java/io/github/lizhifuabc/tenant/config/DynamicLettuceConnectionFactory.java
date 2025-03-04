@@ -121,6 +121,7 @@ public class DynamicLettuceConnectionFactory implements RedisConnectionFactory, 
                 case DATABASE -> factory = createDatabaseConnectionFactory(config);
                 case INSTANCE -> factory = createInstanceConnectionFactory(config);
                 case CLUSTER -> factory = createClusterConnectionFactory(config);
+                case SENTINEL -> factory = createSentinelConnectionFactory(config);
                 default -> throw new IllegalArgumentException("不支持的Redis租户类型");
             }
 
@@ -241,6 +242,22 @@ public class DynamicLettuceConnectionFactory implements RedisConnectionFactory, 
         LettuceConnectionFactory factory = new LettuceConnectionFactory(clusterConfig);
         factory.afterPropertiesSet();
         return factory;
+    }
+
+    // 添加哨兵模式支持
+    private LettuceConnectionFactory createSentinelConnectionFactory(TenantRedisConfig config) {
+        RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration()
+                .master(config.getMasterName());
+
+        for (String node : config.getSentinelNodes()) {
+            String[] parts = node.split(":");
+            sentinelConfig.sentinel(parts[0], Integer.parseInt(parts[1]));
+        }
+
+        sentinelConfig.setPassword(config.getPassword());
+        sentinelConfig.setDatabase(config.getDatabase());
+
+        return new LettuceConnectionFactory(sentinelConfig);
     }
 
     /**

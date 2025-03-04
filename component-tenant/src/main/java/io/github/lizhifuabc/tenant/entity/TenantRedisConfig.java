@@ -17,4 +17,8 @@ public class TenantRedisConfig {
     private String keyPrefix;
     // 集群配置
     private String[] clusterNodes;
+
+    // 哨兵配置
+    private String masterName;
+    private String[] sentinelNodes;
 }
