@@ -26,6 +26,12 @@
 - ContentCachingRequestWrapper 请求包装器，用于缓存请求的输入流。允许多次读取请求体，多次处理请求数据（如日志记录和业务处理）时有用。
 - ContentCachingResponseWrapper 响应包装器，用于缓存响应的输出流。允许在响应提交给客户端之前修改响应体，需要对响应内容进行后处理（如添加额外的头部信息、修改响应体）时非常有用。
 
+ [spring-boot-log日志模块](spring-boot-log) 
+
+- 结构化日志
+- 自定义日志结构化
+- MDC打印
+
  [spring-boot-minio](spring-boot-minio) 
 
 - 文件分片上传
