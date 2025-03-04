@@ -7,6 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
+/**
+ * Redis 多租户测试类
+ * 测试场景：
+ * 1. 不同租户数据隔离验证
+ * 2. 租户切换功能验证
+ * 3. 数据清理验证
+ *
+ * 使用说明：
+ * 1. 确保 Redis 服务可用
+ * 2. 配置正确的连接信息
+ * 3. 执行测试用例
+ */
 @Slf4j
 @SpringBootTest
 public class MultiTenantRedisTest {

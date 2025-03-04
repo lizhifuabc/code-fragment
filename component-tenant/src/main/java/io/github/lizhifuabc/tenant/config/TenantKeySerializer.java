@@ -6,7 +6,14 @@ import org.springframework.util.StringUtils;
 
 /**
  * 租户感知的 Redis Key 序列化器
- * 负责在 Redis key 前自动添加租户标识
+ * 主要功能：
+ * 1. 自动为 key 添加租户前缀
+ * 2. 确保多租户数据隔离
+ * 3. 支持自定义序列化策略
+ *
+ * 使用示例：
+ * redisTemplate.opsForValue().set("user:1", value);
+ * 实际存储的 key 为：${tenantId}:user:1
  *
  * @author lizhifu
  */
