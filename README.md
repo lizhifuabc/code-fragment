@@ -32,22 +32,13 @@
 
 ## 业务组件
 
- [spring-boot-tenant 多租户](spring-boot-tenant) 
+ [component-tenant 多租户](component-tenant) 
 
-TODO
+redis 方案：
 
-- 独立数据库
-  - 跨租户数据聚合需额外ETL系统支持
-  - DBA运维成本随租户数量直线上升
-  - 成本
-- 共享实例独立Schema
-  - 百级Schema数量级后，备份与迁移成本陡增
-  - 跨Schema关联查询必须引入中间聚合层
-  - 数据库连接池需按最大租户数配置 → 连接风暴风险
-- 字段过滤
-  - 任意一次DAO层查询漏加`tenant_id`条件 → 数据跨租户泄露
-  - 索引必须将`tenant_id`作为最左前缀 → 性能瓶颈风险
-  - 全表扫描类查询（如报表统计）无法避免跨租户干扰
+- 小型系统建议使用 Key前缀方案
+- 中型系统可以考虑 Database方案
+- 大型系统或企业级应用推荐独立实例或Cluster方案
 
  [component-idempotent 幂等](component-idempotent) 
 
