@@ -43,6 +43,7 @@
         <module>component-tenant</module>
         <module>spring-boot-minio</module>
         <module>spring-boot-log</module>
+        <module>spring-boot-init</module>
         <module>component-idempotent</module>
         <module>component-rbac</module>
     </modules>

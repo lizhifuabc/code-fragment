@@ -26,6 +26,21 @@
 - ContentCachingRequestWrapper 请求包装器，用于缓存请求的输入流。允许多次读取请求体，多次处理请求数据（如日志记录和业务处理）时有用。
 - ContentCachingResponseWrapper 响应包装器，用于缓存响应的输出流。允许在响应提交给客户端之前修改响应体，需要对响应内容进行后处理（如添加额外的头部信息、修改响应体）时非常有用。
 
+ [spring-boot-init 常用初始化](spring-boot-init) 
+
+单个 Bean 内部的初始化顺序 ：构造方法 → @PostConstruct 方法 → afterPropertiesSet() 方法。
+
+@PostConstruct <---InitializingBean.afterPropertiesSet<---@Bean 的 initMethod<---SmartInitializingSingleton.afterSingletonsInstantiated<---@EventListener (如 ContextRefreshedEvent)<---ApplicationRunner.run<---CommandLineRunner.run<---ApplicationListener (如 ApplicationReadyEvent)
+
+- @PostConstruct 依赖注入完成后立即执行，执行顺序较早
+- InitializingBean 依赖注入完成后调用，执行顺序 < @PostConstruct
+- initMethod 执行顺序在 `@PostConstruct` 和 `InitializingBean` 之后
+- CommandLineRunner 应用完全启动后，执行顺序在所有 Spring 组件初始化完成之后。
+- ApplicationRunner 执行顺序与 CommandLineRunner 相同
+- @EventListener 适用于需要在特定生命周期事件发生时执行的初始化逻辑，以监听各种生命周期事件，如 `ContextRefreshedEvent`、`ContextClosedEvent` 等。
+- SmartInitializingSingleton 在所有单例 bean 初始化完成后执行。适用于需要确保所有单例 bean 都已准备好时执行的初始化逻辑。
+- ApplicationListener 用于在应用完全启动后执行逻辑。可以监听各种 Spring 事件，提供灵活的初始化时机。
+
  [spring-boot-log日志模块](spring-boot-log) 
 
 - 结构化日志
