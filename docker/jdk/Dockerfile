@@ -1,0 +1,98 @@
+# 使用基础镜像
+FROM eclipse-temurin:11-jdk-alpine AS builder
+
+# 指定构建模块
+ARG MODULE=eden-demo-cola-start
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制必要文件
+COPY $MODULE/target/$MODULE.jar application.jar
+COPY docker/entrypoint.sh entrypoint.sh
+
+# 安装最小依赖项
+RUN apk update \
+	&& apk add --no-cache tar binutils \
+    && jdeps --ignore-missing-deps -q \
+		--recursive \
+		--multi-release 11 \
+		--print-module-deps \
+		--class-path '/BOOT-INF/lib/*' \
+		application.jar > modules.txt
+
+# 构建运行环境
+RUN $JAVA_HOME/bin/jlink \
+		--verbose \
+		--add-modules $(cat modules.txt),sun.misc \
+		--strip-debug \
+		--no-man-pages \
+		--no-header-files \
+		--compress=2 \
+		--output /jdk
+
+# 使用 Spring Boot 的分层模式提取 JAR 文件的依赖项
+RUN java -Djarmode=layertools -jar application.jar extract
+
+# 创建容器镜像
+FROM alpine:latest
+
+# 定义元数据
+LABEL maintainer="梦想歌 <shiyindaxiaojie@gmail.com>"
+LABEL version="1.0.0"
+
+# 指定构建参数
+ARG USER=tmpuser
+ARG GROUP=tmpgroup
+
+# 设置环境变量
+ENV JAVA_HOME /opt/jdk
+ENV PATH "${JAVA_HOME}/bin:${PATH}"
+ENV HOME "/app"
+ENV TZ "Asia/Shanghai"
+ENV LANG "C.UTF-8"
+ENV XMS "1g"
+ENV XMX "1g"
+ENV XSS "256k"
+ENV GC_MODE "G1"
+ENV USE_GC_LOG "Y"
+ENV USE_HEAP_DUMP "Y"
+ENV USE_LARGE_PAGES "N"
+ENV SPRING_PROFILES_ACTIVE "dev"
+ENV SERVER_PORT "8080"
+ENV MANAGEMENT_SERVER_PORT "9080"
+
+# 设置日志目录
+RUN mkdir -p $HOME/logs \
+	&& touch $HOME/logs/entrypoint.out \
+	&& ln -sf /dev/stdout $HOME/logs/entrypoint.out \
+	&& ln -sf /dev/stderr $HOME/logs/entrypoint.out
+
+# 切换工作目录
+WORKDIR $HOME
+
+# 从基础镜像复制应用程序依赖项和模块
+COPY --from=builder /jdk $JAVA_HOME
+COPY --from=builder /app/dependencies/ ./
+COPY --from=builder /app/spring-boot-loader ./
+COPY --from=builder /app/organization-dependencies ./
+COPY --from=builder /app/modules-dependencies ./
+COPY --from=builder /app/snapshot-dependencies/ ./
+COPY --from=builder /app/application/ ./
+COPY --from=builder /app/entrypoint.sh ./
+
+# 创建普通用户
+RUN addgroup -g 1000 $GROUP \
+	&& adduser -u 1000 -G $GROUP -h $HOME -s /bin/bash -D $USER \
+	&& chown -R $USER:$GROUP $HOME \
+	&& chmod -R a+rwX $HOME \
+    && chmod 750 entrypoint.sh
+
+# 切换到容器用户
+USER $USER
+
+# 暴露容器端口
+EXPOSE $SERVER_PORT $MANAGEMENT_SERVER_PORT
+
+# 设置启动脚本
+CMD ["./entrypoint.sh"]
