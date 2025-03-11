@@ -1,16 +1,17 @@
 package io.github.lizhifuabc.rbac.system.mapper;
 
-import cn.xbatis.core.mybatis.mapper.MybatisMapper;
-import io.github.lizhifuabc.rbac.system.domain.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
+import io.github.lizhifuabc.rbac.system.domain.entity.SysUser;
+import cn.xbatis.core.mybatis.mapper.MybatisMapper;
 
 /**
- * 用户
+ * <p>
+ * 员工表 Mapper 接口
+ * </p>
  *
  * @author lizhifu
- * @since 2025/3/3
+ * @since 2025-03-06
  */
 @Mapper
-public interface SysUserMapper extends MybatisMapper<SysUserEntity> {
-
+public interface SysUserMapper extends MybatisMapper<SysUser> {
 }
