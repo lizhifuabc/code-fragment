@@ -2,7 +2,9 @@ package io.github.lizhifuabc.docker.service;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
+import com.github.dockerjava.api.model.BlkioStatEntry;
 import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.StatisticNetworksConfig;
 import com.github.dockerjava.api.model.Statistics;
 import io.github.lizhifuabc.docker.config.DockerClientFactory;
 import io.github.lizhifuabc.docker.model.DockerStats;
@@ -14,6 +16,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -130,48 +133,104 @@ public class DockerStatsService {
         stats.setTimestamp(System.currentTimeMillis());
 
         // 计算CPU使用率
-        long cpuDelta = statistics.getCpuStats().getCpuUsage().getTotalUsage()
-                - statistics.getPreCpuStats().getCpuUsage().getTotalUsage();
-        long systemDelta = statistics.getCpuStats().getSystemCpuUsage()
-                - statistics.getPreCpuStats().getSystemCpuUsage();
-        long numCPUs = statistics.getCpuStats().getOnlineCpus();
-        double cpuUsage = 0.0;
-        if (systemDelta > 0 && cpuDelta > 0) {
-            cpuUsage = (cpuDelta / (double) systemDelta) * numCPUs * 100.0;
+        long cpuDelta = 0;
+        long systemDelta = 0;
+        
+        // 直接从Statistics对象获取CPU使用信息
+        try {
+            // 在3.4.2版本中，直接使用getCpuStats()和getPreCpuStats()获取CPU统计信息
+            if (statistics.getCpuStats() != null && statistics.getPreCpuStats() != null) {
+                if (statistics.getCpuStats().getCpuUsage() != null && 
+                    statistics.getPreCpuStats().getCpuUsage() != null) {
+                    Long currentCpuUsage = statistics.getCpuStats().getCpuUsage().getTotalUsage();
+                    Long preCpuUsage = statistics.getPreCpuStats().getCpuUsage().getTotalUsage();
+                    Long currentSystemCpuUsage = statistics.getCpuStats().getSystemCpuUsage();
+                    Long preSystemCpuUsage = statistics.getPreCpuStats().getSystemCpuUsage();
+                    
+                    if (currentCpuUsage != null && preCpuUsage != null && 
+                        currentSystemCpuUsage != null && preSystemCpuUsage != null) {
+                        cpuDelta = currentCpuUsage - preCpuUsage;
+                        systemDelta = currentSystemCpuUsage - preSystemCpuUsage;
+                    }
+                    
+                    double cpuUsage = 0.0;
+                    if (systemDelta > 0 && cpuDelta > 0) {
+                        Long numCPUs = statistics.getCpuStats().getOnlineCpus();
+                        if (numCPUs != null && numCPUs > 0) {
+                            cpuUsage = (cpuDelta / (double) systemDelta) * numCPUs * 100.0;
+                        }
+                    }
+                    stats.setCpuUsage(cpuUsage);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("计算容器{}的CPU使用率时发生异常", container.getId(), e);
+            stats.setCpuUsage(0.0);
         }
-        stats.setCpuUsage(cpuUsage);
 
         // 设置内存使用情况
-        stats.setMemoryUsage(statistics.getMemoryStats().getUsage());
-        stats.setMemoryLimit(statistics.getMemoryStats().getLimit());
-        if (stats.getMemoryLimit() > 0) {
-            stats.setMemoryUsagePercent((double) stats.getMemoryUsage() / stats.getMemoryLimit() * 100);
+        if (statistics.getMemoryStats() != null) {
+            stats.setMemoryUsage(statistics.getMemoryStats().getUsage());
+            stats.setMemoryLimit(statistics.getMemoryStats().getLimit());
+            if (stats.getMemoryLimit() > 0) {
+                stats.setMemoryUsagePercent((double) stats.getMemoryUsage() / stats.getMemoryLimit() * 100);
+            }
         }
 
         // 设置网络IO
-        if (statistics.getNetworks() != null && !statistics.getNetworks().isEmpty()) {
-            long rxBytes = 0;
-            long txBytes = 0;
-            for (var entry : statistics.getNetworks().entrySet()) {
-                rxBytes += entry.getValue().getRxBytes();
-                txBytes += entry.getValue().getTxBytes();
+        Map<String, StatisticNetworksConfig> networks = statistics.getNetworks();
+        if (networks != null && !networks.isEmpty()) {
+            try {
+                long rxBytes = 0;
+                long txBytes = 0;
+                for (Map.Entry<String, StatisticNetworksConfig> entry : networks.entrySet()) {
+                    StatisticNetworksConfig network = entry.getValue();
+                    if (network != null) {
+                        Long rx = network.getRxBytes();
+                        Long tx = network.getTxBytes();
+                        rxBytes += rx != null ? rx : 0;
+                        txBytes += tx != null ? tx : 0;
+                    }
+                }
+                stats.setNetworkInput(rxBytes);
+                stats.setNetworkOutput(txBytes);
+            } catch (Exception e) {
+                log.warn("处理容器{}的网络统计信息时发生异常", container.getId(), e);
+                stats.setNetworkInput(0L);
+                stats.setNetworkOutput(0L);
             }
-            stats.setNetworkInput(rxBytes);
-            stats.setNetworkOutput(txBytes);
+        } else {
+            stats.setNetworkInput(0L);
+            stats.setNetworkOutput(0L);
         }
 
         // 设置块设备IO
-        if (statistics.getBlkioStats() != null) {
-            stats.setBlockRead(statistics.getBlkioStats().getIoServiceBytesRecursive()
-                    .stream()
-                    .filter(bytes -> "Read".equalsIgnoreCase(bytes.getOp()))
-                    .mapToLong(bytes -> bytes.getValue())
-                    .sum());
-            stats.setBlockWrite(statistics.getBlkioStats().getIoServiceBytesRecursive()
-                    .stream()
-                    .filter(bytes -> "Write".equalsIgnoreCase(bytes.getOp()))
-                    .mapToLong(bytes -> bytes.getValue())
-                    .sum());
+        try {
+            if (statistics.getBlkioStats() != null) {
+                List<BlkioStatEntry> ioServiceBytesRecursive = statistics.getBlkioStats().getIoServiceBytesRecursive();
+                if (ioServiceBytesRecursive != null) {
+                    stats.setBlockRead(ioServiceBytesRecursive
+                            .stream()
+                            .filter(bytes -> "Read".equalsIgnoreCase(bytes.getOp()))
+                            .mapToLong(bytes -> bytes.getValue())
+                            .sum());
+                    stats.setBlockWrite(ioServiceBytesRecursive
+                            .stream()
+                            .filter(bytes -> "Write".equalsIgnoreCase(bytes.getOp()))
+                            .mapToLong(bytes -> bytes.getValue())
+                            .sum());
+                } else {
+                    stats.setBlockRead(0L);
+                    stats.setBlockWrite(0L);
+                }
+            } else {
+                stats.setBlockRead(0L);
+                stats.setBlockWrite(0L);
+            }
+        } catch (Exception e) {
+            log.warn("处理容器{}的块设备IO统计信息时发生异常", container.getId(), e);
+            stats.setBlockRead(0L);
+            stats.setBlockWrite(0L);
         }
 
         return stats;

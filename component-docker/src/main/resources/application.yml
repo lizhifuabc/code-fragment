@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: component-docker
+
+docker:
+  # 连接超时时间（毫秒）
+  connectTimeout: 5000
+  # 读取超时时间（毫秒）
+  readTimeout: 30000
+  # 最大连接数
+  maxConnections: 100
+  # Docker服务器配置列表
+  servers:
+    - name: remote
+      host: tcp://192.168.10.202:2376
+      apiVersion: 1.41
+      tlsEnabled: true
+      # 这里要确保包含 ca.pem、cert.pem、key.pem
+      tlsCertPath: /Volumes/anan/download/certs/remote
+      tlsVerify: true

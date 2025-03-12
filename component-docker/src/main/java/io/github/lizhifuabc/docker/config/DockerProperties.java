@@ -61,19 +61,9 @@ public class DockerProperties {
         private boolean tlsEnabled = false;
 
         /**
-         * CA证书路径
-         */
-        private String tlsCaCertPath;
-
-        /**
          * 客户端证书路径
          */
         private String tlsCertPath;
-
-        /**
-         * 客户端私钥路径
-         */
-        private String tlsKeyPath;
 
         /**
          * 是否验证服务器证书

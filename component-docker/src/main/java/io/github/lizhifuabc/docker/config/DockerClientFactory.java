@@ -101,6 +101,7 @@ public class DockerClientFactory {
         // 创建Docker HTTP客户端
         ApacheDockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
                 .dockerHost(config.getDockerHost())
+                .sslConfig(config.getSSLConfig())
                 .maxConnections(dockerProperties.getMaxConnections())
                 .connectionTimeout(Duration.ofMillis(dockerProperties.getConnectTimeout()))
                 .responseTimeout(Duration.ofMillis(dockerProperties.getReadTimeout()))
