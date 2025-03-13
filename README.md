@@ -13,6 +13,7 @@
 
 - guava
 - Redis BitMap 工具类
+- Redis 简单 ID 生成
 
 [spring-boot-virtualthreads 虚拟线程](spring-boot-virtualthreads)
 
