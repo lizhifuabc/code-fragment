@@ -14,6 +14,7 @@
 - guava
 - Redis BitMap 工具类
 - Redis 简单 ID 生成
+- 旁路缓存模式策略、读写穿透策略、异步缓存写入策略
 
 [spring-boot-virtualthreads 虚拟线程](spring-boot-virtualthreads)
 
