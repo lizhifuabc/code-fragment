@@ -22,7 +22,6 @@ create table sys_tenant
     intro             varchar(200)                  comment '企业简介',
     domain            varchar(200)                  comment '域名',
     remark            varchar(200)                  comment '备注',
-    tenant_package_id bigint(20)                    comment '租户套餐id',
     expire_time       datetime                      comment '过期时间',
     account_count     int           default -1      comment '用户数量（-1不限制）',
     status            char(1)       default '0'     comment '租户状态（0正常 1停用）',
@@ -41,7 +40,6 @@ create table sys_tenant
 create table sys_tenant_package (
     tenant_package_id       bigint(20)     not null    comment '租户套餐id',
     package_name            varchar(20)                comment '套餐名称',
-    menu_ids                varchar(3000)              comment '关联菜单id',
     remark                  varchar(200)               comment '备注',
     menu_check_strictly     tinyint(1)     default 1   comment '菜单树选择项是否关联显示',
     status                  char(1)        default '0' comment '状态（0正常 1停用）',
@@ -53,6 +51,25 @@ create table sys_tenant_package (
     update_time             datetime                   comment '更新时间',
     primary key (tenant_package_id)
 ) engine=innodb comment = '租户套餐表';
+
+-- ----------------------------
+-- 租户套餐和菜单关联表  租户套餐1-N菜单
+-- ----------------------------
+create table sys_tenant_package_menu (
+   tenant_package_id   bigint(20) not null comment '租户套餐ID',
+   menu_id   bigint(20) not null comment '菜单ID',
+   primary key(tenant_package_id,menu_id)
+) engine=innodb comment = '租户套餐和菜单关联表';
+
+
+-- ----------------------------
+-- 租户和租户套餐关联表  租户1-N租户套餐
+-- ----------------------------
+create table sys_tenant_package_ref (
+    tenant_package_id   bigint(20) not null comment '租户套餐ID',
+    tenant_id   bigint(20) not null comment '租户ID',
+    primary key(tenant_package_id,tenant_id)
+) engine=innodb comment = '租户和租户套餐关联表';
 
 -- ----------------------------
 -- 部门表
