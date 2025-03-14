@@ -1,3 +1,13 @@
+drop database if exists component_rbac;
+
+create database component_rbac default character set utf8mb4 collate utf8mb4_general_ci;
+
+set names utf8mb4;
+set foreign_key_checks = 0;
+
+use component_rbac;
+
+
 -- ----------------------------
 -- 租户表
 -- ----------------------------
