@@ -1,5 +1,6 @@
 drop database if exists component_rbac;
 
+-- 创建数据库 component_rbac，设置默认字符集为 utf8mb4，校验规则为 utf8mb4_general_ci
 create database component_rbac default character set utf8mb4 collate utf8mb4_general_ci;
 
 set names utf8mb4;
