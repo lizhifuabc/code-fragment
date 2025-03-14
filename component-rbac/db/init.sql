@@ -175,7 +175,8 @@ create table sys_menu (
 create table sys_user_role (
     user_id   bigint(20) not null comment '用户ID',
     role_id   bigint(20) not null comment '角色ID',
-    primary key(user_id, role_id)
+    tenant_id         bigint(20)      not null                   comment '租户id',
+    primary key(tenant_id,user_id, role_id)
 ) engine=innodb comment = '用户和角色关联表';
 
 -- ----------------------------
@@ -184,7 +185,8 @@ create table sys_user_role (
 create table sys_role_menu (
     role_id   bigint(20) not null comment '角色ID',
     menu_id   bigint(20) not null comment '菜单ID',
-    primary key(role_id, menu_id)
+    tenant_id         bigint(20)      not null                   comment '租户id',
+    primary key(tenant_id,role_id, menu_id)
 ) engine=innodb comment = '角色和菜单关联表';
 
 
@@ -194,7 +196,8 @@ create table sys_role_menu (
 create table sys_role_dept (
     role_id   bigint(20) not null comment '角色ID',
     dept_id   bigint(20) not null comment '部门ID',
-    primary key(role_id, dept_id)
+    tenant_id         bigint(20)      not null                   comment '租户id',
+    primary key(tenant_id,role_id, dept_id)
 ) engine=innodb comment = '角色和部门关联表';
 
 -- ----------------------------
@@ -204,5 +207,6 @@ create table sys_user_post
 (
     user_id   bigint(20) not null comment '用户ID',
     post_id   bigint(20) not null comment '岗位ID',
-    primary key (user_id, post_id)
+    tenant_id         bigint(20)      not null                   comment '租户id',
+    primary key (tenant_id,user_id, post_id)
 ) engine=innodb comment = '用户与岗位关联表';
