@@ -19,7 +19,7 @@ create table sys_tenant
     del_flag          char(1)       default '0'     comment '删除标志（0代表存在 1代表删除）',
     create_dept       bigint(20)                    comment '创建部门',
     create_by         bigint(20)                    comment '创建者',
-    create_time       datetime                      comment '创建时间',
+    create_time       datetime      default current_timestamp  comment '创建时间',
     update_by         bigint(20)                    comment '更新者',
     update_time       datetime                      comment '更新时间',
     primary key (tenant_id)
@@ -38,7 +38,7 @@ create table sys_tenant_package (
     del_flag                char(1)        default '0' comment '删除标志（0代表存在 1代表删除）',
     create_dept             bigint(20)                 comment '创建部门',
     create_by               bigint(20)                 comment '创建者',
-    create_time             datetime                   comment '创建时间',
+    create_time             datetime        default current_timestamp  comment '创建时间',
     update_by               bigint(20)                 comment '更新者',
     update_time             datetime                   comment '更新时间',
     primary key (tenant_package_id)
@@ -62,7 +62,7 @@ create table sys_dept (
     del_flag          char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     create_dept       bigint(20)      default null               comment '创建部门',
     create_by         bigint(20)      default null               comment '创建者',
-    create_time       datetime                                   comment '创建时间',
+    create_time       datetime        default current_timestamp  comment '创建时间',
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
     primary key (dept_id)
@@ -89,7 +89,7 @@ create table sys_user (
     login_date        datetime                                   comment '最后登录时间',
     create_dept       bigint(20)      default null               comment '创建部门',
     create_by         bigint(20)      default null               comment '创建者',
-    create_time       datetime                                   comment '创建时间',
+    create_time       datetime        default current_timestamp  comment '创建时间',
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
     remark            varchar(500)    default null               comment '备注',
@@ -111,7 +111,7 @@ create table sys_post
     status        char(1)         not null                   comment '状态（0正常 1停用）',
     create_dept   bigint(20)      default null               comment '创建部门',
     create_by     bigint(20)      default null               comment '创建者',
-    create_time   datetime                                   comment '创建时间',
+    create_time   datetime        default current_timestamp  comment '创建时间',
     update_by     bigint(20)      default null               comment '更新者',
     update_time   datetime                                   comment '更新时间',
     remark        varchar(500)    default null               comment '备注',
@@ -134,7 +134,7 @@ create table sys_role (
     del_flag             char(1)         default '0'                comment '删除标志（0代表存在 1代表删除）',
     create_dept          bigint(20)      default null               comment '创建部门',
     create_by            bigint(20)      default null               comment '创建者',
-    create_time          datetime                                   comment '创建时间',
+    create_time          datetime        default current_timestamp  comment '创建时间',
     update_by            bigint(20)      default null               comment '更新者',
     update_time          datetime                                   comment '更新时间',
     remark               varchar(500)    default null               comment '备注',
@@ -161,7 +161,7 @@ create table sys_menu (
     icon              varchar(100)    default '#'                comment '菜单图标',
     create_dept       bigint(20)      default null               comment '创建部门',
     create_by         bigint(20)      default null               comment '创建者',
-    create_time       datetime                                   comment '创建时间',
+    create_time       datetime        default current_timestamp  comment '创建时间',
     update_by         bigint(20)      default null               comment '更新者',
     update_time       datetime                                   comment '更新时间',
     remark            varchar(500)    default ''                 comment '备注',
@@ -206,116 +206,3 @@ create table sys_user_post
     post_id   bigint(20) not null comment '岗位ID',
     primary key (user_id, post_id)
 ) engine=innodb comment = '用户与岗位关联表';
-
-
--- ----------------------------
--- 操作日志记录
--- ----------------------------
-create table sys_operation_log (
-    operation_log_id        bigint(20)      not null                   comment '日志主键',
-    tenant_id               bigint(20)      not null                   comment '租户id',
-    title                   varchar(50)     default ''                 comment '模块标题',
-    business_type           int(2)          default 0                  comment '业务类型（0其它 1新增 2修改 3删除）',
-    method                  varchar(100)    default ''                 comment '方法名称',
-    request_method          varchar(10)     default ''                 comment '请求方式',
-    operator_type           int(1)          default 0                  comment '操作类别（0其它 1后台用户 2手机端用户）',
-    operation_name          varchar(50)     default ''                 comment '操作人员',
-    dept_name               varchar(50)     default ''                 comment '部门名称',
-    operation_url           varchar(255)    default ''                 comment '请求URL',
-    operation_ip            varchar(128)    default ''                 comment '主机地址',
-    operation_location      varchar(255)    default ''                 comment '操作地点',
-    operation_param         varchar(4000)   default ''                 comment '请求参数',
-    json_result             varchar(4000)   default ''                 comment '返回参数',
-    status                  int(1)          default 0                  comment '操作状态（0正常 1异常）',
-    error_msg               varchar(4000)   default ''                 comment '错误消息',
-    operation_time          datetime                                   comment '操作时间',
-    cost_time               bigint(20)      default 0                  comment '消耗时间',
-    primary key (operation_log_id),
-    key idx_sys_operation_bt (business_type),
-    key idx_sys_operation_s  (status),
-    key idx_sys_operation_ot (operation_time)
-) engine=innodb comment = '操作日志记录';
-
-
--- ----------------------------
--- 字典类型表
--- ----------------------------
-create table sys_dict
-(
-    dict_id          bigint(20)      not null                   comment '字典主键',
-    tenant_id        bigint(20)      not null                   comment '租户id',
-    dict_name        varchar(100)    default ''                 comment '字典名称',
-    dict_type        varchar(100)    default ''                 comment '字典类型',
-    create_dept      bigint(20)      default null               comment '创建部门',
-    create_by        bigint(20)      default null               comment '创建者',
-    create_time      datetime                                   comment '创建时间',
-    update_by        bigint(20)      default null               comment '更新者',
-    update_time      datetime                                   comment '更新时间',
-    remark           varchar(500)    default null               comment '备注',
-    primary key (dict_id),
-    unique (tenant_id, dict_type)
-) engine=innodb comment = '字典类型表';
-
--- ----------------------------
--- 字典数据表
--- ----------------------------
-create table sys_dict_data
-(
-    dict_data_id     bigint(20)      not null                   comment '字典数据id',
-    tenant_id        bigint(20)      not null                   comment '租户id',
-    dict_sort        int(4)          default 0                  comment '字典排序',
-    dict_label       varchar(100)    default ''                 comment '字典标签',
-    dict_value       varchar(100)    default ''                 comment '字典键值',
-    dict_type        varchar(100)    default ''                 comment '字典类型',
-    css_class        varchar(100)    default null               comment '样式属性（其他样式扩展）',
-    list_class       varchar(100)    default null               comment '表格回显样式',
-    is_default       char(1)         default 'N'                comment '是否默认（Y是 N否）',
-    create_dept      bigint(20)      default null               comment '创建部门',
-    create_by        bigint(20)      default null               comment '创建者',
-    create_time      datetime                                   comment '创建时间',
-    update_by        bigint(20)      default null               comment '更新者',
-    update_time      datetime                                   comment '更新时间',
-    remark           varchar(500)    default null               comment '备注',
-    primary key (dict_data_id)
-) engine=innodb comment = '字典数据表';
-
--- ----------------------------
--- 系统访问记录
--- ----------------------------
-create table sys_login_info (
-    login_info_id  bigint(20)     not null                  comment '访问ID',
-    tenant_id      bigint(20)      not null                 comment '租户id',
-    user_name      varchar(50)    default ''                comment '用户账号',
-    client_key     varchar(32)    default ''                comment '客户端',
-    device_type    varchar(32)    default ''                comment '设备类型',
-    ipaddr         varchar(128)   default ''                comment '登录IP地址',
-    login_location varchar(255)   default ''                comment '登录地点',
-    browser        varchar(50)    default ''                comment '浏览器类型',
-    os             varchar(50)    default ''                comment '操作系统',
-    status         char(1)        default '0'               comment '登录状态（0成功 1失败）',
-    msg            varchar(255)   default ''                comment '提示消息',
-    login_time     datetime                                 comment '访问时间',
-    primary key (login_info_id),
-    key idx_sys_login_info_s  (status),
-    key idx_sys_login_info_lt (login_time)
-) engine=innodb comment = '系统访问记录';
-
-
--- ----------------------------
--- 通知公告表
--- ----------------------------
-create table sys_notice (
-    notice_id         bigint(20)      not null                   comment '公告ID',
-    tenant_id         bigint(20)      not null                   comment '租户id',
-    notice_title      varchar(50)     not null                   comment '公告标题',
-    notice_type       char(1)         not null                   comment '公告类型（1通知 2公告）',
-    notice_content    longblob        default null               comment '公告内容',
-    status            char(1)         default '0'                comment '公告状态（0正常 1关闭）',
-    create_dept       bigint(20)      default null               comment '创建部门',
-    create_by         bigint(20)      default null               comment '创建者',
-    create_time       datetime                                   comment '创建时间',
-    update_by         bigint(20)      default null               comment '更新者',
-    update_time       datetime                                   comment '更新时间',
-    remark            varchar(255)    default null               comment '备注',
-    primary key (notice_id)
-) engine=innodb comment = '通知公告表';
