@@ -29,9 +29,9 @@ create table sys_tenant
     deleted_flag tinyint NOT NULL DEFAULT 0 COMMENT '是否删除',
     create_dept       bigint                    comment '创建部门',
     create_by         bigint                    comment '创建者',
-    create_time       datetime      default current_timestamp  comment '创建时间',
     update_by         bigint                    comment '更新者',
-    update_time       datetime                      comment '更新时间',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    create_time datetime not null default current_timestamp comment '创建时间',
     primary key (tenant_id)
 ) engine=innodb comment = '租户表';
 
@@ -47,9 +47,9 @@ create table sys_tenant_package (
     deleted_flag tinyint NOT NULL DEFAULT 0 COMMENT '是否删除',
     create_dept             bigint                 comment '创建部门',
     create_by               bigint                 comment '创建者',
-    create_time             datetime        default current_timestamp  comment '创建时间',
     update_by               bigint                 comment '更新者',
-    update_time             datetime                   comment '更新时间',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    create_time datetime not null default current_timestamp comment '创建时间',
     primary key (tenant_package_id)
 ) engine=innodb comment = '租户套餐表';
 
@@ -90,9 +90,9 @@ create table sys_dept (
     deleted_flag tinyint NOT NULL DEFAULT 0 COMMENT '是否删除',
     create_dept       bigint      default null               comment '创建部门',
     create_by         bigint      default null               comment '创建者',
-    create_time       datetime        default current_timestamp  comment '创建时间',
     update_by         bigint      default null               comment '更新者',
-    update_time       datetime                                   comment '更新时间',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    create_time datetime not null default current_timestamp comment '创建时间',
     primary key (dept_id)
 ) engine=innodb comment = '部门表';
 
@@ -117,9 +117,9 @@ create table sys_user (
     login_date        datetime                                   comment '最后登录时间',
     create_dept       bigint      default null               comment '创建部门',
     create_by         bigint      default null               comment '创建者',
-    create_time       datetime        default current_timestamp  comment '创建时间',
     update_by         bigint      default null               comment '更新者',
-    update_time       datetime                                   comment '更新时间',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    create_time datetime not null default current_timestamp comment '创建时间',
     remark            varchar(500)    default null               comment '备注',
     primary key (user_id)
 ) engine=innodb comment = '用户信息表';
@@ -139,9 +139,9 @@ create table sys_post
     disabled_flag tinyint NOT NULL DEFAULT 0 COMMENT '是否禁用',
     create_dept   bigint      default null               comment '创建部门',
     create_by     bigint      default null               comment '创建者',
-    create_time   datetime        default current_timestamp  comment '创建时间',
     update_by     bigint      default null               comment '更新者',
-    update_time   datetime                                   comment '更新时间',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    create_time datetime not null default current_timestamp comment '创建时间',
     remark        varchar(500)    default null               comment '备注',
     primary key (post_id)
 ) engine=innodb comment = '岗位信息表';
@@ -155,19 +155,29 @@ create table sys_role (
     role_name            varchar(30)     not null                   comment '角色名称',
     role_key             varchar(100)    not null                   comment '角色权限字符串',
     role_sort            int          not null                   comment '显示顺序',
-    data_scope           char(1)         default '1'                comment '数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限 5：仅本人数据权限 6：部门及以下或本人数据权限）',
     menu_check_strictly  tinyint      default 1                  comment '菜单树选择项是否关联显示',
     dept_check_strictly  tinyint      default 1                  comment '部门树选择项是否关联显示',
     disabled_flag tinyint NOT NULL DEFAULT 0 COMMENT '是否禁用',
     deleted_flag         tinyint NOT NULL DEFAULT 0 COMMENT '是否删除',
     create_dept          bigint      default null               comment '创建部门',
     create_by            bigint      default null               comment '创建者',
-    create_time          datetime        default current_timestamp  comment '创建时间',
     update_by            bigint      default null               comment '更新者',
-    update_time          datetime                                   comment '更新时间',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    create_time datetime not null default current_timestamp comment '创建时间',
     remark               varchar(500)    default null               comment '备注',
     primary key (role_id)
 ) engine=innodb comment = '角色信息表';
+
+create table sys_role_data_scope  (
+  role_data_scope_id bigint not null auto_increment,
+  data_scope_type int not null comment '数据范围类型',
+  view_type int not null comment '数据可见范围类型',
+  role_id bigint not null comment '角色id',
+  update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+  create_time datetime not null default current_timestamp comment '创建时间',
+  primary key (role_data_scope_id)
+) engine=innodb comment = '角色的数据范围';
+
 
 -- ----------------------------
 -- 菜单权限表
@@ -189,9 +199,9 @@ create table sys_menu (
     icon              varchar(100)    default '#'                comment '菜单图标',
     create_dept       bigint      default null               comment '创建部门',
     create_by         bigint      default null               comment '创建者',
-    create_time       datetime        default current_timestamp  comment '创建时间',
     update_by         bigint      default null               comment '更新者',
-    update_time       datetime                                   comment '更新时间',
+    update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    create_time datetime not null default current_timestamp comment '创建时间',
     remark            varchar(500)    default ''                 comment '备注',
     primary key (menu_id)
 ) engine=innodb comment = '菜单权限表';
