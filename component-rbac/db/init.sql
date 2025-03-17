@@ -168,6 +168,9 @@ create table sys_role (
     primary key (role_id)
 ) engine=innodb comment = '角色信息表';
 
+-- ----------------------------
+-- 角色数据范围
+-- ----------------------------
 create table sys_role_data_scope  (
   role_data_scope_id bigint not null auto_increment,
   data_scope_type int not null comment '数据范围类型',
@@ -176,7 +179,7 @@ create table sys_role_data_scope  (
   update_time datetime not null default current_timestamp on update current_timestamp comment '更新时间',
   create_time datetime not null default current_timestamp comment '创建时间',
   primary key (role_data_scope_id)
-) engine=innodb comment = '角色的数据范围';
+) engine=innodb comment = '角色数据范围表';
 
 
 -- ----------------------------
