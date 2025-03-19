@@ -1,0 +1,17 @@
+### 发送通知类型消息
+POST http://localhost:8080/api/messages/send
+Content-Type: application/x-www-form-urlencoded
+
+content=这是一条通知消息&type=notification
+
+### 发送事件类型消息
+POST http://localhost:8080/api/messages/send
+Content-Type: application/x-www-form-urlencoded
+
+content=这是一条事件消息&type=event
+
+### 发送自定义类型消息
+POST http://localhost:8080/api/messages/send
+Content-Type: application/x-www-form-urlencoded
+
+content=这是一条自定义类型消息&type=custom

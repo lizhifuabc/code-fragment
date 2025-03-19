@@ -8,6 +8,11 @@
 
 - TODO  API 版本控制 Spring Framework 7.0.0-M3
 
+ [spring-boot-rabbitmq](spring-boot-rabbitmq) 
+
+- 消费端限流：开启手动签收、prefetch = 5
+- 不公平分发：开启手动签收、prefetch = 1
+
 [spring-boot-admin监控](spring-boot-admin) 
 
 - 使用 https://github.com/codecentric/spring-boot-admin
