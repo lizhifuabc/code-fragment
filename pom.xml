@@ -47,6 +47,7 @@
         <module>component-idempotent</module>
         <module>component-rbac</module>
         <module>component-docker</module>
+        <module>spring-boot-web</module>
     </modules>
 
     <!-- SCM 信息 -->
