@@ -7,6 +7,11 @@
  [spring-boot-web](spring-boot-web) 
 
 - TODO  API 版本控制 Spring Framework 7.0.0-M3
+- API 版本控制 Spring Framework 6
+- OpenAPI 文档
+- 脱敏
+- 签名
+- 限流
 
  [spring-boot-rabbitmq](spring-boot-rabbitmq) 
 

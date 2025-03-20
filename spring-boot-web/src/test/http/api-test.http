@@ -1,0 +1,52 @@
+### 测试版本控制 API - V1 版本
+GET http://localhost:8080/api/v1/query
+Accept: application/json
+
+### 测试版本控制 API - V2 版本
+GET http://localhost:8080/api/v2/query
+Accept: application/json
+
+### 获取用户信息（带签名验证和数据脱敏）
+# 注意：实际使用时需要计算正确的签名
+GET http://localhost:8080/api/v1/secure/user?userId=10001&timestamp=1616123456789&sign=A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6
+Accept: application/json
+
+### 批量处理数据（带记录数限制和幂等性校验）
+POST http://localhost:8080/api/v1/secure/batch
+Content-Type: application/json
+X-Request-Id: {{$uuid}}
+
+{
+  "items": [
+    {
+      "id": "1",
+      "name": "项目1",
+      "description": "描述1"
+    },
+    {
+      "id": "2",
+      "name": "项目2",
+      "description": "描述2"
+    }
+  ]
+}
+
+### 查询任务状态
+GET http://localhost:8080/api/v1/secure/task/task123456
+Accept: application/json
+
+### 获取用户信息（自动脱敏）
+GET http://localhost:8080/api/sensitive/user
+Accept: application/json
+
+### 执行压测
+GET http://localhost:8080/test/pressure/run?url=http://localhost:8080/api/v1/query&concurrency=5&totalRequests=100
+Accept: application/json
+
+### 访问 OpenAPI 文档
+GET http://localhost:8080/api-docs
+Accept: application/json
+
+### 访问 Swagger UI
+GET http://localhost:8080/swagger-ui.html
+Accept: text/html
