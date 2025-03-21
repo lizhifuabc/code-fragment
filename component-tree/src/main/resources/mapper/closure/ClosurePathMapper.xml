@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.lizhifuabc.tree.mapper.closure.ClosurePathMapper">
+    <resultMap id="BaseResultMap" type="io.github.lizhifuabc.tree.domain.closure.ClosurePath">
+        <id column="ancestor_id" property="ancestorId"/>
+        <id column="descendant_id" property="descendantId"/>
+        <result column="distance" property="distance"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="io.github.lizhifuabc.tree.domain.closure.ClosurePath">
+        insert into tree_closure_path (ancestor_id, descendant_id, distance)
+        values (#{ancestorId}, #{descendantId}, #{distance})
+    </insert>
+
+    <delete id="delete">
+        delete from tree_closure_path
+        where ancestor_id = #{ancestorId} and descendant_id = #{descendantId}
+    </delete>
+
+    <delete id="deleteByNodeId">
+        delete from tree_closure_path
+        where ancestor_id = #{nodeId} or descendant_id = #{nodeId}
+    </delete>
+
+    <select id="selectAncestorIds" resultType="java.lang.Long">
+        select ancestor_id
+        from tree_closure_path
+        where descendant_id = #{descendantId}
+        order by distance
+    </select>
+
+    <select id="selectDescendantIds" resultType="java.lang.Long">
+        select descendant_id
+        from tree_closure_path
+        where ancestor_id = #{ancestorId}
+        and descendant_id != #{ancestorId}
+        order by distance
+    </select>
+
+    <select id="selectChildIds" resultType="java.lang.Long">
+        select descendant_id
+        from tree_closure_path
+        where ancestor_id = #{parentId}
+        and distance = 1
+        order by descendant_id
+    </select>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into tree_closure_path (ancestor_id, descendant_id, distance)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.ancestorId}, #{item.descendantId}, #{item.distance})
+        </foreach>
+    </insert>
+</mapper>

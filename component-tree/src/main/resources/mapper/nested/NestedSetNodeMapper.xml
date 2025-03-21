@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.lizhifuabc.tree.mapper.nested.NestedSetNodeMapper">
+    <resultMap id="BaseResultMap" type="io.github.lizhifuabc.tree.domain.nested.NestedSetNode">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="lft" property="lft"/>
+        <result column="rgt" property="rgt"/>
+        <result column="level" property="level"/>
+        <result column="description" property="description"/>
+        <result column="disabled_flag" property="disabledFlag"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, lft, rgt, level, description, disabled_flag, deleted_flag, update_time, create_time
+    </sql>
+
+    <insert id="insert" parameterType="io.github.lizhifuabc.tree.domain.nested.NestedSetNode" useGeneratedKeys="true" keyProperty="id">
+        insert into tree_nested_set (name, lft, rgt, level, description)
+        values (#{name}, #{lft}, #{rgt}, #{level}, #{description})
+    </insert>
+
+    <update id="update" parameterType="io.github.lizhifuabc.tree.domain.nested.NestedSetNode">
+        update tree_nested_set
+        set name = #{name},
+            description = #{description}
+        where id = #{id} and deleted_flag = 0
+    </update>
+
+    <update id="delete">
+        update tree_nested_set
+        set deleted_flag = 1
+        where id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_nested_set
+        where id = #{id} and deleted_flag = 0
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_nested_set
+        where deleted_flag = 0
+        order by lft
+    </select>
+
+    <select id="selectByParentId" resultMap="BaseResultMap">
+        select child.*
+        from tree_nested_set parent, tree_nested_set child
+        where child.lft > parent.lft
+        and child.rgt < parent.rgt
+        and child.level = parent.level + 1
+        and parent.id = #{parentId}
+        and child.deleted_flag = 0
+        order by child.lft
+    </select>
+
+    <select id="selectDescendants" resultMap="BaseResultMap">
+        select child.*
+        from tree_nested_set parent, tree_nested_set child
+        where child.lft > parent.lft
+        and child.rgt < parent.rgt
+        and parent.id = #{id}
+        and child.deleted_flag = 0
+        order by child.lft
+    </select>
+    
+    <select id="selectAncestors" resultMap="BaseResultMap">
+        select parent.*
+        from tree_nested_set node, tree_nested_set parent
+        where node.lft > parent.lft
+        and node.rgt < parent.rgt
+        and node.id = #{id}
+        and parent.deleted_flag = 0
+        order by parent.lft
+    </select>
+    
+    <update id="updateLeftValues">
+        update tree_nested_set
+        set lft = lft + #{increment}
+        where lft >= #{lft}
+        and deleted_flag = 0
+    </update>
+    
+    <update id="updateRightValues">
+        update tree_nested_set
+        set rgt = rgt + #{increment}
+        where rgt >= #{rgt}
+        and deleted_flag = 0
+    </update>
+</mapper>

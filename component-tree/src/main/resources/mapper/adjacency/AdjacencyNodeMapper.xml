@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.lizhifuabc.tree.mapper.adjacency.AdjacencyNodeMapper">
+    <resultMap id="BaseResultMap" type="io.github.lizhifuabc.tree.domain.adjacency.AdjacencyNode">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="level" property="level"/>
+        <result column="description" property="description"/>
+        <result column="disabled_flag" property="disabledFlag"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, parent_id, name, level, description, disabled_flag, deleted_flag, update_time, create_time
+    </sql>
+
+    <insert id="insert" parameterType="io.github.lizhifuabc.tree.domain.adjacency.AdjacencyNode" useGeneratedKeys="true" keyProperty="id">
+        insert into tree_adjacency_list (parent_id, name, level, description)
+        values (#{parentId}, #{name}, #{level}, #{description})
+    </insert>
+
+    <update id="update" parameterType="io.github.lizhifuabc.tree.domain.adjacency.AdjacencyNode">
+        update tree_adjacency_list
+        set parent_id = #{parentId},
+            name = #{name},
+            level = #{level},
+            description = #{description}
+        where id = #{id} and deleted_flag = 0
+    </update>
+
+    <update id="delete">
+        update tree_adjacency_list
+        set deleted_flag = 1
+        where id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_adjacency_list
+        where id = #{id} and deleted_flag = 0
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_adjacency_list
+        where deleted_flag = 0
+        order by level, id
+    </select>
+
+    <select id="selectByParentId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_adjacency_list
+        where parent_id = #{parentId} and deleted_flag = 0
+        order by id
+    </select>
+
+    <select id="selectDescendants" resultMap="BaseResultMap">
+        WITH RECURSIVE tree AS (
+            SELECT * FROM tree_adjacency_list WHERE id = #{id} AND deleted_flag = 0
+            UNION ALL
+            SELECT c.* FROM tree_adjacency_list c, tree p WHERE c.parent_id = p.id AND c.deleted_flag = 0
+        )
+        SELECT * FROM tree WHERE id != #{id} ORDER BY level, id
+    </select>
+</mapper>

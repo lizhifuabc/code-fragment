@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.lizhifuabc.tree.mapper.closure.ClosureNodeMapper">
+    <resultMap id="BaseResultMap" type="io.github.lizhifuabc.tree.domain.closure.ClosureNode">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="level" property="level"/>
+        <result column="description" property="description"/>
+        <result column="disabled_flag" property="disabledFlag"/>
+        <result column="deleted_flag" property="deletedFlag"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, level, description, disabled_flag, deleted_flag, update_time, create_time
+    </sql>
+
+    <insert id="insert" parameterType="io.github.lizhifuabc.tree.domain.closure.ClosureNode" useGeneratedKeys="true" keyProperty="id">
+        insert into tree_closure_node (name, level, description)
+        values (#{name}, #{level}, #{description})
+    </insert>
+
+    <update id="update" parameterType="io.github.lizhifuabc.tree.domain.closure.ClosureNode">
+        update tree_closure_node
+        set name = #{name},
+            description = #{description}
+        where id = #{id} and deleted_flag = 0
+    </update>
+
+    <update id="delete">
+        update tree_closure_node
+        set deleted_flag = 1
+        where id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_closure_node
+        where id = #{id} and deleted_flag = 0
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tree_closure_node
+        where deleted_flag = 0
+        order by level, id
+    </select>
+</mapper>

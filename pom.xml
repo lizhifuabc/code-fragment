@@ -46,6 +46,7 @@
         <module>spring-boot-init</module>
         <module>component-idempotent</module>
         <module>component-rbac</module>
+        <module>component-tree</module>
         <module>component-docker</module>
         <module>spring-boot-web</module>
     </modules>
